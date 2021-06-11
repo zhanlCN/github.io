@@ -10,13 +10,13 @@ cache:
 before_install:
   - git config --global user.name "zhanlCN"  # github用户名
   - git config --global user.email "2185233558@qq.com"  # 邮箱
-  - npm install 
+  # - npm install 
 install:
-  - npm i
+  # - npm i
 before_script:
 # 无其他依赖项所以执行npm run build 构建就行了
 script:
-  - npm run build
+  # - npm run build
 # after_script:
 #   - git clone https://${GH_REF} .deploy_git  # GH_REF是最下面配置的仓库地址
 #   - cd .deploy_git
