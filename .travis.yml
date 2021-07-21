@@ -1,64 +1,35 @@
 language: node_js #设置语言
-node_js: stable # nodejs版本
+
+node_js: "14.17.3" #设置语言版本
+
+cache:
+  directories:
+    - node_modules #缓存依赖
+
+# S: Build Lifecycle
+install:
+  - npm i
+
+script:
+  - npm run build
+
+after_script前5句是把部署分支的.git文件夹保护起来，用于保留历史部署的commit日志，否则部署分支永远只有一条commit记录。
+#命令里面的变量都是在Travis CI里配置过的。
+after_script:
+  - git clone https://${GH_REF} .temp
+  - cd .temp
+  - git checkout gh-pages
+  - cd ../
+  - mv .temp/.git dist
+  - cd dist
+  - git config user.name "${U_NAME}"
+  - git config user.email "${U_EMAIL}"
+  - git add .
+  - git commit -m ":construction_worker:- Build & Deploy by Travis CI"
+  - git push --force --quiet "https://${Travis_Token}@${GH_REF}" gh-pages:${D_BRANCH}
+# E: Build LifeCycle
+
+# 只有指定的分支提交时才会运行脚本
 branches:
   only:
-    - master #只监测master分支
-cache:
-    apt: true
-    directories:
-        - node_modules # 缓存不经常更改的内容
-before_install:
-  - git config --global user.name "zhanlCN"  # github用户名
-  - git config --global user.email "2185233558@qq.com"  # 邮箱
-  # - npm install 
-install:
-  # - npm i
-before_script:
-# 无其他依赖项所以执行npm run build 构建就行了
-script:
-  # - npm run build
-# after_script:
-#   - git clone https://${GH_REF} .deploy_git  # GH_REF是最下面配置的仓库地址
-#   - cd .deploy_git
-#   - git checkout master
-#   - cd ../
-#   - mv .deploy_git/.git/ ./public/   # 这一步之前的操作是为了保留master分支的提交记录，不然每次git init的话只有1条commit
-#   - cd ./public
-#   - git init
-#   - git add .
-#   - git commit -m "Travis CI Auto Builder at `date +"%Y-%m-%d %H:%M"`" # 提交记录包含时间 
-#   - git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" master:master #GH_TOKEN是在Travis中配置环境变量的名称
-after_success:
-  - cd ./dist
-  - git init
-  - git config --global user.name "${U_NAME}"
-  - git config --global user.email "${U_EMAIL}"
-  - git add .
-  - git commit -m "Automatically update from travis-ci"
-  - git push --quiet --force  "https://${GH_TOKEN}@${GH_REF}" master:master
-env:
- global:
-   - GH_REF: ${GH_REF} #设置GH_REF,换成自己用户名和仓库名
-
-# language: node_js
-# node_js:
-#   - "8"
-
-# install:
-#   - npm install
-
-# script:
-#   - npm run build
-
-# after_success:
-#   - cd ./dist
-#   - git init
-#   - git config --global user.name "${U_NAME}"
-#   - git config --global user.email "${U_EMAIL}"
-#   - git add .
-#   - git commit -m "Automatically update from travis-ci"
-#   - git push --quiet --force  "https://${GH_TOKEN}@${GH_REF}" master:${P_BRANCH}
-
-# branches:
-#   only:
-#     - master
+    - master
