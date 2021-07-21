@@ -1,5 +1,6 @@
 <template>
     <div>
+      222
       <div class='chartsWrapper' :style='style' id='map'></div>
     </div>
 </template>
